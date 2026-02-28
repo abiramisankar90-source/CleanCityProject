@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CleanCity Mission</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input { margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #pointsBox { font-size: 20px; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+    <h2>🎮 Clean Mission</h2>
+
+    <h3>Upload Before & After Photos</h3>
+
+    <p>Before Cleaning:</p>
+    <input type="file" id="beforePhoto">
+    <p>After Cleaning:</p>
+    <input type="file" id="afterPhoto">
+
+    <br>
+    <button id="submitBtn" disabled>Submit Clean Mission ✅</button>
+
+    <h3 id="pointsBox">⭐ Points : Loading...</h3>
+    <p id="locationBox"></p>
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        // 🔥 Your Firebase Config
+      const firebaseConfig = {
+  apiKey: "AIzaSyAyWRcPRMy2erqvi4vJxS1QnAS5_KRG10M",
+  authDomain: "cleancity-a3347.firebaseapp.com",
+  projectId: "cleancity-a3347",
+  storageBucket: "cleancity-a3347.firebasestorage.app",
+  messagingSenderId: "414804255002",
+  appId: "1:414804255002:web:95e78888b457443f1a4ca3",
+  measurementId: "G-042D2WG7G5"
+};
+
+
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        const submitBtn = document.getElementById("submitBtn");
+        let currentUser = null;
+
+        // Login the user automatically with Google
+        const provider = new GoogleAuthProvider();
+
+        async function loginUser() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                currentUser = result.user;
+                console.log("User logged in:", currentUser.email);
+                submitBtn.disabled = false;
+                loadPoints();
+            } catch (err) {
+                console.error("Login failed:", err);
+                alert("Login failed! Try again.");
+            }
+        }
+
+        // Check auth state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log("Logged in:", user.email);
+                submitBtn.disabled = false;
+                loadPoints();
+            } else {
+                loginUser(); // Auto login
+            }
+        });
+
+        // Load points
+        async function loadPoints() {
+            try {
+                const userRef = doc(db, "users", currentUser.uid);
+                const snap = await getDoc(userRef);
+                let points = snap.exists() ? (snap.data().points || 0) : 0;
+                document.getElementById("pointsBox").innerText = "⭐ Points : " + points;
+            } catch (err) {
+                console.error("Error loading points:", err);
+            }
+        }
+
+        // Submit Mission
+        submitBtn.addEventListener("click", async () => {
+
+            if (!currentUser) { alert("User not logged in!"); return; }
+
+            const beforeFile = document.getElementById("beforePhoto").files[0];
+            const afterFile = document.getElementById("afterPhoto").files[0];
+
+            if (!beforeFile || !afterFile) { alert("Upload both photos!"); return; }
+
+            const missionID = beforeFile.name + "_" + afterFile.name;
+            const missionRef = doc(db, "missions", missionID);
+            const missionSnap = await getDoc(missionRef);
+
+            if (missionSnap.exists()) { alert("Mission already uploaded ❌"); return; }
+
+            // Get location
+            const getLocation = () => new Promise((resolve) => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+                        (err) => resolve({ lat: "Unknown", lon: "Unknown" }),
+                        { timeout: 10000 }
+                    );
+                } else {
+                    resolve({ lat: "Unknown", lon: "Unknown" });
+                }
+            });
+
+            const loc = await getLocation();
+            document.getElementById("locationBox").innerText = "📍 Location: " + loc.lat + ", " + loc.lon;
+
+            try {
+                // Upload photos
+                await uploadBytes(ref(storage, "before/" + beforeFile.name), beforeFile);
+                await uploadBytes(ref(storage, "after/" + afterFile.name), afterFile);
+
+                // Save mission
+                await setDoc(missionRef, {
+                    user: currentUser.email,
+                    location: loc.lat + "," + loc.lon,
+                    timestamp: new Date()
+                });
+
+                // Update points
+                const userRef = doc(db, "users", currentUser.uid);
+                const snap = await getDoc(userRef);
+                let points = snap.exists() ? (snap.data().points || 0) : 0;
+                points += 20;
+                await setDoc(userRef, { email: currentUser.email, points });
+
+                document.getElementById("pointsBox").innerText = "⭐ Points : " + points;
+                alert("Mission Completed 🎉");
+
+            } catch (err) {
+                console.error("Submission failed:", err);
+                alert("Mission submission failed! ❌");
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

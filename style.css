@@ -1,0 +1,208 @@
+/* Background */
+
+body{
+
+margin:0;
+padding:0;
+
+font-family:Arial, sans-serif;
+
+text-align:center;
+
+/* City Cleaning Background Image */
+
+background-image:url("https://images.unsplash.com/photo-1532996122724-e3c354a0b15b");
+
+background-size:cover;
+
+background-attachment:fixed;
+
+color:white;
+
+}
+
+
+
+/* Title */
+
+h1{
+
+font-size:45px;
+
+color:#00ffcc;
+
+text-shadow:3px 3px 8px black;
+
+}
+
+
+
+h2{
+
+font-size:35px;
+
+text-shadow:2px 2px 5px black;
+
+}
+
+
+
+h3{
+
+text-shadow:2px 2px 5px black;
+
+}
+
+
+
+/* Glass Effect Boxes */
+
+.rewardBox{
+
+background:rgba(0,0,0,0.6);
+
+margin:15px auto;
+
+padding:20px;
+
+width:300px;
+
+border-radius:20px;
+
+box-shadow:0px 0px 15px black;
+
+font-size:20px;
+
+}
+
+
+
+/* Points Box */
+
+#points{
+
+background:rgba(0,255,100,0.7);
+
+padding:15px;
+
+border-radius:20px;
+
+width:250px;
+
+margin:auto;
+
+color:black;
+
+font-size:22px;
+
+}
+
+
+
+/* Buttons */
+
+button{
+
+padding:15px 30px;
+
+font-size:18px;
+
+border-radius:30px;
+
+border:none;
+
+cursor:pointer;
+
+background:linear-gradient(45deg,green,lime);
+
+color:white;
+
+box-shadow:0px 5px 15px black;
+
+transition:0.3s;
+
+}
+
+
+
+/* Button Hover Animation */
+
+button:hover{
+
+transform:scale(1.1);
+
+background:linear-gradient(45deg,blue,cyan);
+
+}
+
+
+
+/* Main Buttons */
+
+.mainButton{
+
+font-size:20px;
+
+padding:20px;
+
+width:260px;
+
+}
+
+
+
+/* Leaderboard Boxes */
+
+.leader{
+
+background:rgba(255,255,0,0.8);
+
+color:black;
+
+margin:10px auto;
+
+padding:15px;
+
+width:300px;
+
+border-radius:20px;
+
+font-size:20px;
+
+box-shadow:0px 0px 10px black;
+
+}
+
+
+
+/* File Upload */
+
+input{
+
+padding:10px;
+
+border-radius:10px;
+
+border:none;
+
+}
+
+
+
+/* Mission Box */
+
+.mission{
+
+background:rgba(0,0,255,0.6);
+
+padding:20px;
+
+border-radius:20px;
+
+width:320px;
+
+margin:auto;
+
+box-shadow:0px 0px 15px black;
+
+}

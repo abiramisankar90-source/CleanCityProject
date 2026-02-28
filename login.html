@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Worker Login</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h2>🧹 CleanCity Worker Login</h2>
+
+<br>
+
+<input type="text" id="username" placeholder="Enter Worker Name">
+
+<br><br>
+
+<button onclick="loginUser()">
+
+Login
+
+</button>
+
+<br><br>
+
+<a href="index.html">
+
+<button>
+
+Back Home
+
+</button>
+
+</a>
+
+<script>
+
+function loginUser()
+{
+
+let user =
+document.getElementById("username").value;
+
+if(user=="")
+{
+alert("Enter your name");
+return;
+}
+
+/* Save Login */
+
+localStorage.setItem("username",user);
+
+alert("✅ Login Successful");
+
+/* Go Upload Page */
+
+window.location.href="upload.html";
+
+}
+
+</script>
+
+</body>
+
+</html>
